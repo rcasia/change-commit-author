@@ -16,7 +16,7 @@ To use this script, follow these steps:
 2. Inside your repository folder, download the script by running the following command in your terminal:
 
 ```
-curl -sSfO https://raw.githubusercontent.com/rcasia/change-commit-author/697ed6af9b018ee823fbe392dae48ed0d6dc5206/change-commit-author.sh && sh change-commit-author.sh
+curl -sSfO https://raw.githubusercontent.com/rcasia/change-commit-author/main/change-commit-author.sh && sh change-commit-author.sh
 ```
 
 
