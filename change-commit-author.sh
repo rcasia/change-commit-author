@@ -32,6 +32,7 @@ if [ \"\$GIT_COMMITTER_EMAIL\" = \"$OLD_EMAIL\" ]
 then
     export GIT_COMMITTER_NAME=\"$NAME\"
     export GIT_COMMITTER_EMAIL=\"$EMAIL\"
+    export GIT_COMMITTER_DATE=\"\$GIT_AUTHOR_DATE\"
 fi
 if [ \"\$GIT_AUTHOR_EMAIL\" = \"$OLD_EMAIL\" ]
 then
