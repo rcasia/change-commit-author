@@ -1,5 +1,7 @@
 # Changing the Author of a Commit
 
+[![Makefile CI](https://github.com/rcasia/change-commit-author/actions/workflows/makefile.yml/badge.svg?branch=main)](https://github.com/rcasia/change-commit-author/actions/workflows/makefile.yml)
+
 If you've mistakenly made a commit using the wrong author information, don't worry! This is a common issue, but fortunately, there's an easy solution.
 
 
