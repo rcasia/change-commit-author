@@ -1,0 +1,89 @@
+#!/bin/bash
+
+# get testscript path
+script_under_test=$(realpath change-commit-author.sh)
+
+# store current dir
+current_dir=$(pwd)
+
+wrong_author="John"
+wrong_email="john@example.com"
+
+right_author="Alice"
+right_email="alice@example.com"
+
+function add_commit() {
+  git commit -m "$1" --allow-empty
+}
+
+function git_log() {
+  git log --pretty=format:"%h%x09%aN%x09%aE%x09%ad%x09%s" > $1
+}
+
+# set up
+temp_dir=$(mktemp -d)
+echo "created temp dir: ${temp_dir}"
+
+# # initialize git
+cd ${temp_dir}
+git init
+
+# # add several commits by John
+git config user.name "${wrong_author}"
+git config user.email "${wrong_email}"
+
+# disable gpg signing for testing
+git config user.signingkey "" 
+git config commit.gpgsign false 
+git config core.pager ''
+
+add_commit "commit A"
+add_commit "commit B"
+add_commit "commit C"
+
+git_log "commits_by_john.txt"
+
+# run script
+echo "------------------------ Running script ------------------------"
+echo "Running script: ${script_under_test} ${wrong_email} ${right_author} ${right_email}"
+sh ${script_under_test} ${wrong_email} ${right_author} ${right_email}
+echo "------------------------ Script finished ------------------------"
+
+# # commit authour is now Alice
+git_log "commits_by_alice.txt"
+
+# check the expectations
+echo ""
+echo "------------------------ Checking differences ------------------------"
+diff commits_by_john.txt commits_by_alice.txt -y
+echo ""
+echo "------------------------ Differences checked ------------------------"
+
+# if it is removed print a message
+
+# assert that wrong author is not present
+failed_tests_messages=()
+if grep -q "${wrong_author}" commits_by_alice.txt; then
+  failed_tests_messages+=("Wrong author is present. Expected ${wrong_author} to be replaced by ${right_author}")
+fi
+
+
+echo "------------------------ Cleaning up ------------------------"
+rm -rf "${temp_dir}" && echo "removed temp dir: ${temp_dir}"
+cd "${current_dir}"
+echo "------------------------ Cleaned up ------------------------"
+echo ""
+
+exit_code=0
+if [ ${#failed_tests_messages[@]} -eq 0 ]; then
+  echo "------------------------ All tests passed ------------------------"
+else
+  echo "------------------------ Tests failed ------------------------"
+  for message in "${failed_tests_messages[@]}"; do
+    echo "* ${message}"
+  done
+  exit_code=1
+fi
+
+exit ${exit_code}
+
