@@ -59,14 +59,17 @@ diff commits_by_john.txt commits_by_alice.txt -y
 echo ""
 echo "------------------------ Differences checked ------------------------"
 
-# if it is removed print a message
+failed_tests_messages=()
 
 # assert that wrong author is not present
-failed_tests_messages=()
 if grep -q "${wrong_author}" commits_by_alice.txt; then
   failed_tests_messages+=("Wrong author is present. Expected ${wrong_author} to be replaced by ${right_author}")
 fi
 
+# assert that wrong email is not present
+if grep -q "${wrong_email}" commits_by_alice.txt; then
+  failed_tests_messages+=("Wrong email is present. Expected ${wrong_email} to be replaced by ${right_email}")
+fi
 
 echo "------------------------ Cleaning up ------------------------"
 rm -rf "${temp_dir}" && echo "removed temp dir: ${temp_dir}"
