@@ -1,23 +1,31 @@
 #!/bin/sh
 
-echo "\n"
-echo "Change authorship of commits"
-read -p "Enter your correct name: " NAME
-read -p "Enter your correct email address: " EMAIL
-read -p "Enter your old email address: " OLD_EMAIL
 
+echo "Change authorship of commits"
 echo "\n"
 echo "WARNING: This operation is potentially dangerous and can rewrite the history of your Git repository. Use with caution and make sure you have a backup of your repository before running this script."
 
-echo "\n"
-echo "$OLD_EMAIL ---> $EMAIL"
-echo "Are you sure you want to change the authorship of the commits? (y/n)"
+if [ $# -ne 3 ]; then
+    read -p "Enter your old email address: " OLD_EMAIL
+    read -p "Enter your correct name: " NAME
+    read -p "Enter your correct email address: " EMAIL
 
-read -r CONFIRMATION
-if [ "$CONFIRMATION" != "y" ]; then
-    echo "Aborting operation."
-    exit 1
+
+    echo "\n"
+    echo "$OLD_EMAIL ---> $EMAIL"
+    echo "Are you sure you want to change the authorship of the commits? (y/n)"
+
+    read -r CONFIRMATION
+    if [ "$CONFIRMATION" != "y" ]; then
+        echo "Aborting operation."
+        exit 1
+    fi
+else
+  OLD_EMAIL=$1
+  NAME=$2
+  EMAIL=$3
 fi
+
 
 output=$(git filter-branch --env-filter "
 if [ \"\$GIT_COMMITTER_EMAIL\" = \"$OLD_EMAIL\" ]
