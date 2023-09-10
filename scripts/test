@@ -79,17 +79,19 @@ if grep -q "${current_date}" commits_by_alice.txt; then
   failed_tests_messages+=("Current date is present. Expected ${committer_date} to stay unchanged in the commit history")
 fi
 
-echo "------------------------ Cleaning up ------------------------"
+echo "Cleaning up..."
 rm -rf "${temp_dir}" && echo "removed temp dir: ${temp_dir}"
 cd "${current_dir}"
-echo "------------------------ Cleaned up ------------------------"
+
 echo ""
+echo ""
+echo "*** Test results ***"
 
 exit_code=0
 if [ ${#failed_tests_messages[@]} -eq 0 ]; then
-  echo "------------------------ All tests passed ------------------------"
+  echo "Tests passed"
 else
-  echo "------------------------ Tests failed ------------------------"
+  echo "Failed tests (count: ${#failed_tests_messages[@]}):"
   for message in "${failed_tests_messages[@]}"; do
     echo "* ${message}"
   done
