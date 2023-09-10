@@ -8,16 +8,18 @@ current_dir=$(pwd)
 
 wrong_author="John"
 wrong_email="john@example.com"
+committer_date="2020-01-01T00:00:00"
 
 right_author="Alice"
 right_email="alice@example.com"
 
 function add_commit() {
-  git commit -m "$1" --allow-empty
+  # set committer date to 1st of January 2020
+  git commit -m "$1" --allow-empty --date "${committer_date}"
 }
 
 function git_log() {
-  git log --pretty=format:"%h%x09%aN%x09%aE%x09%ad%x09%s" > $1
+  git log --pretty=format:" %aN %x09 %aE %cn %ce %x09 %ad %x09 %s %ci" > $1
 }
 
 # set up
@@ -55,7 +57,7 @@ git_log "commits_by_alice.txt"
 # check the expectations
 echo ""
 echo "------------------------ Checking differences ------------------------"
-diff commits_by_john.txt commits_by_alice.txt -y
+diff commits_by_john.txt commits_by_alice.txt
 echo ""
 echo "------------------------ Differences checked ------------------------"
 
@@ -69,6 +71,12 @@ fi
 # assert that wrong email is not present
 if grep -q "${wrong_email}" commits_by_alice.txt; then
   failed_tests_messages+=("Wrong email is present. Expected ${wrong_email} to be replaced by ${right_email}")
+fi
+
+# assert that current date is not present
+current_date=$(date +"%Y-%m-%d")
+if grep -q "${current_date}" commits_by_alice.txt; then
+  failed_tests_messages+=("Current date is present. Expected ${committer_date} to stay unchanged in the commit history")
 fi
 
 echo "------------------------ Cleaning up ------------------------"
